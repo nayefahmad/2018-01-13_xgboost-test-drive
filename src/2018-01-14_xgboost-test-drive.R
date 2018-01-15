@@ -12,7 +12,6 @@ require(data.table)
 if (!require('vcd')) install.packages('vcd')
 
 # TODO: -----------------------
-# > data.table syntax 
 
 #******************************
 
@@ -30,8 +29,10 @@ str(df)
 # experiment1: group ages into buckets of 10: -----
 head(df[ , AgeDiscret := as.factor(round(Age/10, 0))])
 
-# note: above we're using data.table syntax. Not yet completely 
-#     sure how that works. 
+# note: above we're using data.table syntax. 
+# General form: DT[i, j, by]
+# “Take DT, subset rows using i, then calculate j grouped by by”
+# ":=" is used to update cols by reference to name
 
 # experiment2: arbitrarily group ages into 2 buckets: 
 head(df[ , AgeCat := as.factor(ifelse(Age > 30, 
@@ -103,6 +104,14 @@ importanceRaw <- xgb.importance(feature_names = colnames(sparse_matrix),
                                 label = output_vector)
 
 # Cleaning for better display: 
-importanceClean <- importanceRaw[,`:=`(Cover=NULL, Frequency=NULL)]
+importanceClean <- importanceRaw[ ,`:=`(Cover=NULL, Frequency=NULL)]
+# todo: not entirely sure what `:=` does 
 
 head(importanceClean)
+
+# RealCover and RealCover %: In the first column it measures the number of observations in the dataset where the split is respected and the label marked as 1.
+#     > todo: what does label = 1 mean? 
+
+# The second column is the percentage of the whole population that RealCover represents.
+
+# Therefore, according to our findings, getting a placebo doesn't seem to help but being younger than 61 years may help (seems logic).
