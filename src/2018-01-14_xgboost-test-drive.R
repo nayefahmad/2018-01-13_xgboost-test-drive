@@ -5,6 +5,7 @@
 #******************************
 
 help(package = "xgboost")
+# reference: https://cran.r-project.org/web/packages/xgboost/vignettes/discoverYourData.html
 
 require(xgboost)
 require(Matrix)
