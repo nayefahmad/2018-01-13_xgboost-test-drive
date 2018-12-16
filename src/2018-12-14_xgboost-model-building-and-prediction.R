@@ -9,6 +9,8 @@
 
 library(xgboost)
 library(tidyverse)
+library(caret)
+library(pROC)
 
 help(package = "xgboost")
 
@@ -117,6 +119,25 @@ err <- mean(prediction != test$label)  # 0.0217
 # This metric is 0.02 and is pretty low: our yummly mushroom
 # model works well!
 
+# > confusion matrix using caret package: ------ 
+confusionMatrix(factor(prediction), 
+                factor(test$label))
+
+# looks really good! 
+
+
+# > ROC curve using pROC package: -------
+?roc
+
+roc_test <- roc(test$label, 
+                prediction, 
+                algorithm = 2)
+
+# todo: algorithm 1 vs 2? 
+
+plot(roc_test)
+auc(roc_test)  # Area under the curve: 0.9785
+
 
 # 7) Other notes:  -------- 
 
@@ -138,7 +159,7 @@ xgb.plot.importance(importance_matrix = importance.matrix)
 xgb.dump(bstDMatrix, 
          with_stats = TRUE)
 
-# todo: how to read this? s
+# todo: how to read this? 
 
 # plotting: 
 xgb.plot.tree(model = bstDMatrix)
