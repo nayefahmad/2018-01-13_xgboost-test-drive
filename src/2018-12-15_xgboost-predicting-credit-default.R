@@ -66,7 +66,7 @@ table(test.target)
 mod1 <- xgboost(data = m2.train.dmatrix, 
                 max_depth = 4, 
                 eta = 1, 
-                nrounds = 100,  
+                nrounds = 3,  
                 objective = "binary:logistic", 
                 verbose = TRUE)
 
@@ -88,9 +88,10 @@ table(train.target)  # actual responses on training data
 confusionMatrix(factor(train.pred), 
                 factor(as.numeric(train.target)))
 
-# on train data, the model is doing really well. We expect
-# it to do worse on test data, but this is good enough that
-# we will proceed to predict without doing further tuning. 
+# in the xgboost() call, setting the nrounds parameter too
+# high will cause overfitting, meaning the results on the
+# train data will not be representative at all of
+# performance on actual test data.
 
 
 # 5) predict on the test set: --------
@@ -112,15 +113,18 @@ confusionMatrix(factor(test.pred),
 # todo: how to increase the specificity?? 
 
 
+# 7) roc curve: -----------
+roc1 <- roc(test.target, 
+            test.pred, 
+            algorithm = 2)
+
+plot(roc1)
+auc(roc1)  # Area under the curve: 0.6312. This is not great. 
 
 
 
-
-
-
-
-
-# 4) Alternative model development using cross-validation: ------------
+#********************************************************
+# 8) Alternative model development using cross-validation: ------------
 # Note: first do CV, then do one final prediction on the 
 # test data
 # reference: https://stats.stackexchange.com/questions/152907/how-do-you-use-test-data-set-after-cross-validation 
