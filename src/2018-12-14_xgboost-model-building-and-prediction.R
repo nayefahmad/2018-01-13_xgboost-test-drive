@@ -119,14 +119,14 @@ err <- mean(prediction != test$label)  # 0.0217
 # This metric is 0.02 and is pretty low: our yummly mushroom
 # model works well!
 
-# > confusion matrix using caret package: ------ 
+# > 6.1) confusion matrix using caret package: ------ 
 confusionMatrix(factor(prediction), 
                 factor(test$label))
 
 # looks really good! 
 
 
-# > ROC curve using pROC package: -------
+# > 6.2) ROC curve using pROC package: -------
 ?roc
 
 roc_test <- roc(test$label, 
@@ -137,6 +137,23 @@ roc_test <- roc(test$label,
 
 plot(roc_test)
 auc(roc_test)  # Area under the curve: 0.9785
+
+
+# > 6.3) Cross validation of result: -----------
+cv.results <- xgb.cv(data = dtrain, 
+                     nrounds = 3, 
+                     nthread = 2, 
+                     nfold = 5, 
+                     metrics = c("rmse", 
+                                 "auc"), 
+                     max_depth = 3, 
+                     eta = 1, 
+                     objective = "binary:logistic")
+
+print(cv.results)
+
+# each round, we do a 5-fold validation and average metrics
+# like rmse and auc across the 5 folds
 
 
 # 7) Other notes:  -------- 
