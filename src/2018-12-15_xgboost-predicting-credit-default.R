@@ -99,29 +99,52 @@ test.pred <- predict(mod1,
                      m3.sparse.test)
 
 # use threshold of 0.5 to convert to factor: 
-test.pred <- as.numeric(test.pred > 0.5)
+test.pred.binary <- as.numeric(test.pred > 0.02891263)
+# threshold was found using the roc curve below
 
-table(test.pred)  # predicted responses on test data 
+table(test.pred.binary)  # predicted responses on test data 
 table(test.target)  # actual responses on test data 
 
 # 6) Confusion matrix on training data: -------
-confusionMatrix(factor(test.pred), 
+confusionMatrix(factor(test.pred.binary), 
                 factor(as.numeric(test.target)))
 
-# Sensitivity is still good, but specificity is quite bad: 
-# 0.2727
-# todo: how to increase the specificity?? 
+# out of 66 ppl in the test dataset who defaulted, we
+# correctly identified 61 of them. We miscalssified 5/66 =
+# 8%
+
+# however, on the flip side, out of 1933 non-defaulters, we
+# misclassified 354/1933 = 18%
 
 
 # 7) roc curve: -----------
-roc1 <- roc(test.target, 
+?roc
+
+roc1 <- roc(as.numeric(test.target), 
             test.pred, 
-            algorithm = 2)
+            algorithm = 0)
 
-plot(roc1)
-auc(roc1)  # Area under the curve: 0.6312. This is not great. 
+plot(roc1, 
+     col = "blue")
+auc(roc1)  # Area under the curve: 0.9254 This is not great. 
 
 
+# extract thresholds from the ROC curve: 
+# ?coords
+roc1.coords <- coords(roc = roc1, 
+                      x = "all")
+roc1.coords
+
+# let's say our goal is really high sensitivity. with decent
+# specificity
+
+roc1.coords[, roc1.coords["sensitivity", ] >= .90]
+
+# threshold of 0.0289 seems good. 
+
+# just checking, what if we used default threshold of 0.5? 
+coords(roc = roc1, 
+       x = 0.5)
 
 #********************************************************
 # 8) Alternative model development using cross-validation: ------------
