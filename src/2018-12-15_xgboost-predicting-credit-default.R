@@ -126,7 +126,7 @@ roc1 <- roc(as.numeric(test.target),
 
 plot(roc1, 
      col = "blue")
-auc(roc1)  # Area under the curve: 0.9254 This is not great. 
+auc(roc1)  # Area under the curve: 0.9254 This is great. 
 
 
 # extract thresholds from the ROC curve: 
