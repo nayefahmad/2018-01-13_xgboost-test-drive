@@ -35,10 +35,20 @@ df2.train <- df1.default[train_index, ]
 df3.test <- df1.default[-train_index, ]
 # nrow(df2.train) + nrow(df3.test)
 
+# checking whether xgboost can handle NA values 
+# in predictors:
+df2.train[1,3] <- NA
+# df2.train[2,3] <- "NULL"
+head(df2.train)
+
 # sparse matrix of predictor values: 
 m1.sparse.train <- sparse.model.matrix(default ~ ., 
                                  data = df2.train)[,-1]
 head(m1.sparse.train)
+# looks like sparse.mode.matrix( ) removed entire row with
+# the NA value
+# todo: can we prevent this? 
+
 
 # vector of response values: 
 train.target <- df2.train$default == "Yes"
