@@ -7,12 +7,13 @@
 #*****************************************************
 
 
-library(xgboost)
 library(tidyverse)
 library(caret)
 library(pROC)
 library(ISLR)
 library(Matrix)
+library(xgboost)
+library(xgboostExplainer)
 
 help(package = "xgboost")
 
@@ -60,7 +61,7 @@ m2.train.dmatrix <- xgb.DMatrix(data = m1.train.predictors,
                                 label = train.target)
 
 
-# > 1.3) test set data ready: 
+# > 1.3) test set data ready: -------
 m3.test.predictors <- sparse.model.matrix(default ~ ., 
                                       data = df3.test)[,-1]
 
@@ -226,15 +227,27 @@ auc(roc2)  # Area under the curve: 0.9254 This is great.
 
 
 
+# 8) trying xgboostExplainer: ---------
+?buildExplainer
 
+explainer = buildExplainer(mod1,
+                           m2.train.dmatrix, 
+                           type="binary",
+                           base_score = 0.5,
+                           trees_idx = NULL)
 
+?explainPredictions
 
+pred.breakdown = explainPredictions(mod1,
+                                    explainer,
+                                    m3.test.predictors)
 
+?showWaterfall
 
-
-
-
-
-
-
+xgboostExplainer::showWaterfall(xgb.model = mod1,
+                                explainer = explainer,
+                                DMatrix = m3.test.predictors,
+                                data.matrix = data.matrix(df3.test[, -1]),
+                                idx = 1,
+                                type = "binary")
 
