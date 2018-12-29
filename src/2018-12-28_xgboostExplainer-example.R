@@ -95,7 +95,7 @@ cat('Breakdown Complete','\n')
 weights = rowSums(pred.breakdown)
 pred.xgb = 1/(1+exp(-weights))
 cat(max(xgb.preds-pred.xgb),'\n')
-idx_to_get = as.integer(802)
+idx_to_get = as.integer(800)
 test[idx_to_get,-"left"]
 showWaterfall(xgb.model, explainer, xgb.test.data, data.matrix(test[,-'left']) ,idx_to_get, type = "binary")
 
